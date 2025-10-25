@@ -12,8 +12,6 @@ from typing import Any
 
 from openai import OpenAI
 
-from dataset.safety_prompts import CONSTRUCTION_SAFETY_PROMPTS
-
 logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", datefmt="%H:%M:%S"
@@ -194,15 +192,12 @@ class VideoDatasetGenerator:
 
 
 if __name__ == "__main__":
-    import random
+    from safety_prompts import get_all_prompts
 
-    from safety_prompts import CONSTRUCTION_SAFETY_PROMPTS
-
-    NUM_SAMPLES = 5
-    prompts = random.sample(CONSTRUCTION_SAFETY_PROMPTS, NUM_SAMPLES)
+    prompts = get_all_prompts()
     generator = VideoDatasetGenerator(
         config=VideoConfig(),
-        max_workers=2,
+        max_workers=10,
         poll_interval=2,
     )
     generator.process(prompts)

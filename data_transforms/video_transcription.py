@@ -12,70 +12,83 @@ from domain.event import Event
 
 VIDEO_TRANSCRIPTION_PROMPT: str = """You are a construction site safety expert analyzing video footage for hazards.
 
-Analyze this construction site video and identify all safety hazards present. For each hazard:
-1. Identify the specific hazard type from the available categories
-2. Provide a clear description of what you observe
-3. Assess the risk level (CRITICAL, HIGH, MEDIUM, LOW)
-4. Recommend specific actions to mitigate the hazard
+Analyze this construction site video and assess the safety status. For any incidents detected:
+1. Determine the overall safety status (SAFE, LOW, MEDIUM, HIGH, EXTREME)
+2. Describe the scene and what you observe
+3. Identify the incident type and estimate the probability of occurrence
+4. Provide a specific safety response action
 
 Return your analysis as a JSON object matching this schema:
 
 {
   "video_id": string,
-  "location_description": string,
-  "hazards": [
-    {
-      "hazard_type": enum[
-        "Fall Hazard (Height)",
-        "Trip/Slip Hazard (Ground)",
-        "Unsecured Working Platform",
-        "Struck-by (Moving Equipment/Vehicle)",
-        "Crush/Proximity Hazard (Blind Spot)",
-        "Dropped Object Hazard",
-        "Equipment-Equipment Collision Risk",
-        "PPE Violation (Missing/Incorrect)",
-        "Electrical Hazard (Exposed Wire/Damage)",
-        "Lockout/Tagout Violation",
-        "Improper Lifting/Rigging",
-        "Pressurized Gas/Cylinder Hazard",
-        "Fire/Explosion Hazard",
-        "Confined Space Entry Violation",
-        "Chemical Exposure/Spill",
-        "Excessive Noise Exposure",
-        "Heat/Cold Stress",
-        "Improper Material Storage/Stacking",
-        "Improper Tool Use",
-        "Trench/Excavation Cave-in Risk",
-        "Unguarded Floor/Wall Opening",
-        "Unsafe Worker Behavior/Distraction",
-        "Other Safety Concern"
-      ],
-      "description": string,
-      "risk_level": enum["CRITICAL", "HIGH", "MEDIUM", "LOW"],
-      "recommended_actions": array[string]
-    }
-  ]
+  "safety_status": enum["SAFE", "LOW", "MEDIUM", "HIGH", "EXTREME"],
+  "scene_description": string,
+  "predictions": {
+    "probability": float (0.0 to 1.0),
+    "incident_type": enum[
+      "Fall Hazard (Height)",
+      "Trip/Slip Hazard (Ground)",
+      "Unsecured Working Platform",
+      "Struck-by (Moving Equipment/Vehicle)",
+      "Crush/Proximity Hazard (Blind Spot)",
+      "Caught-in/Caught-between Machinery",
+      "Dropped Object Hazard",
+      "Equipment-Equipment Collision Risk",
+      "Equipment Instability/Tip-over Risk",
+      "PPE Violation (Missing/Incorrect)",
+      "Electrical Hazard (Exposed Wire/Damage)",
+      "Lockout/Tagout Violation",
+      "Improper Lifting/Rigging",
+      "Pressurized Gas/Cylinder Hazard",
+      "Fire/Explosion Hazard",
+      "Confined Space Entry Violation",
+      "Chemical Exposure/Spill",
+      "Excessive Noise Exposure",
+      "Heat/Cold Stress",
+      "Improper Material Storage/Stacking",
+      "Improper Tool Use",
+      "Trench/Excavation Cave-in Risk",
+      "Unguarded Floor/Wall Opening",
+      "Laceration/Severe Bleeding",
+      "Muscle Strain/Sprain Injury",
+      "Eye Injury/Foreign Object",
+      "Burn/Thermal Injury",
+      "Call 911 - Emergency Services Required",
+      "Fire Department Required",
+      "Medical Emergency - First Aid/Ambulance",
+      "Evacuation Required",
+      "Active Fire/Smoke",
+      "Person Down/Injured",
+      "Hazmat/Chemical Incident Response",
+      "Structural Collapse/Damage",
+      "Unsafe Worker Behavior/Distraction",
+      "Other Safety Concern",
+      "No Hazard Detected"
+    ]
+  },
+  "safety_response": string
 }
 
 Example:
 {
   "video_id": "video_001",
-  "location_description": "Scaffolding area on third floor of construction site",
-  "hazards": [
-    {
-      "hazard_type": "PPE Violation (Missing/Incorrect)",
-      "description": "Worker operating without hard hat near overhead work",
-      "risk_level": "HIGH",
-      "recommended_actions": [
-        "Require all workers to wear proper PPE",
-        "Conduct safety briefing",
-        "Post PPE requirement signage"
-      ]
-    }
-  ]
+  "safety_status": "HIGH",
+  "scene_description": "Scaffolding area on third floor of construction site with worker operating without proper head protection near overhead work",
+  "predictions": {
+    "probability": 0.85,
+    "incident_type": "PPE Violation (Missing/Incorrect)"
+  },
+  "safety_response": "Require all workers to wear proper PPE including hard hats. Conduct immediate safety briefing and post PPE requirement signage in visible areas."
 }
 
-If no hazards are detected, return an empty hazards array."""
+Guidelines:
+- SAFE: Normal operations with no hazards detected
+- LOW: Minor safety concern, no immediate risk
+- MEDIUM: Potential hazard that needs attention soon
+- HIGH: Serious hazard requiring immediate attention
+- EXTREME: Life-threatening situation requiring emergency response
+- Probability should reflect likelihood of incident: 0.0-0.3 (low), 0.4-0.6 (medium), 0.7-1.0 (high)"""
 
 
 @dataclasses.dataclass
@@ -132,7 +145,9 @@ class VideoTranscription:
                 if video_id:
                     event.video_id = video_id
 
-                logging.info(f"Successfully processed video. Found {len(event.hazards)} hazards")
+                logging.info(
+                    f"Successfully processed video. Status: {event.safety_status}, Incident: {event.predictions.incident_type}"
+                )
                 return event
 
             except json.JSONDecodeError as e:
@@ -155,7 +170,7 @@ class VideoTranscription:
 
         futures = []
         with self.thread_executor as executor:
-            for _idx, (video_data, video_id) in enumerate(videos):
+            for video_data, video_id in videos:
                 futures.append(executor.submit(self._process, video_data, video_id=video_id))
 
         results = []
