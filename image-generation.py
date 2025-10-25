@@ -1,8 +1,8 @@
-from openai import OpenAI
 import sys
 import time
-import os
 from pathlib import Path
+
+from openai import OpenAI
 
 openai = OpenAI()
 
@@ -18,8 +18,8 @@ SORA_MODELS = ["sora-2", "sora-2-pro"]
 #   seed: Optional integer for reproducibility
 #   input_reference: Optional starting image file (JPEG, PNG, WebP)
 video = openai.videos.create(
-    model="sora-2",  # Models: "sora-2" ($3/10s) or "sora-2-pro" ($5/10s)
-    prompt="Wide shot of a busy construction site with a large yellow tower crane lifting heavy steel beams overhead. A construction worker in an orange safety vest and white hard hat walks directly underneath the suspended load, unaware of the overhead hazard. Overcast daylight with diffused natural lighting, industrial atmosphere with dirt ground, construction equipment, and safety warning signs visible in the background. Camera slowly pans right to follow the worker's path beneath the crane.",
+    model="sora-2-pro",  # Models: "sora-2" ($3/10s) or "sora-2-pro" ($5/10s)
+    prompt="Medium shot of a construction site. A construction worker in an orange safety vest and white hard hat walks under scaffolding while looking at his phone, distracted. As he passes underneath, a tool bag falls from the scaffold above and strikes near him, causing him to stumble and fall to the ground. Other workers in the background rush to help. Overcast daylight, industrial setting with construction equipment visible. Camera remains steady to capture the accident sequence for safety training purposes.",
     seconds=str(SECONDS),  # Must be a string: "4", "8", or "12"
     size="1280x720",
 )
@@ -47,9 +47,7 @@ while video.status in ("in_progress", "queued"):
 sys.stdout.write("\n")
 
 if video.status == "failed":
-    message = getattr(
-        getattr(video, "error", None), "message", "Video generation failed"
-    )
+    message = getattr(getattr(video, "error", None), "message", "Video generation failed")
     print(message)
     sys.exit(1)
 
