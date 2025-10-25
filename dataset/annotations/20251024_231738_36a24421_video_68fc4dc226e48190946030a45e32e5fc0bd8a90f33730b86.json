@@ -1,0 +1,27 @@
+{
+  "video_id": "20251024_231738_36a24421_video_68fc4dc226e48190946030a45e32e5fc0bd8a90f33730b86",
+  "location_description": "Construction site with scaffolding and active work areas",
+  "hazards": [
+    {
+      "hazard_type": "Dropped Object Hazard",
+      "description": "A red bag is placed unsecured on a horizontal scaffolding beam directly above the worker, posing a significant risk of falling and striking personnel below.",
+      "risk_level": "CRITICAL",
+      "recommended_actions": [
+        "Immediately remove the unsecured item from the overhead structure.",
+        "Implement a strict policy for securing all tools and materials when working at height.",
+        "Conduct a toolbox talk on dropped object prevention.",
+        "Ensure proper barricading or exclusion zones are established below overhead work areas."
+      ]
+    },
+    {
+      "hazard_type": "PPE Violation (Missing/Incorrect)",
+      "description": "The worker's head is covered by a hood, obscuring whether a hard hat is being worn. In a construction environment with overhead structures and ongoing work, a hard hat is typically mandatory to protect against head injuries.",
+      "risk_level": "HIGH",
+      "recommended_actions": [
+        "Verify if the worker is wearing a hard hat underneath the hood. If not, instruct the worker to wear one immediately.",
+        "Reinforce site-specific PPE requirements for all personnel.",
+        "Ensure all workers are trained on the importance and correct use of PPE."
+      ]
+    }
+  ]
+}

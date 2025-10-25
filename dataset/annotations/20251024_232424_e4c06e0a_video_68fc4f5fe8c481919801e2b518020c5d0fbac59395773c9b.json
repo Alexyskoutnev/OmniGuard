@@ -1,0 +1,47 @@
+{
+  "video_id": "20251024_232424_e4c06e0a_video_68fc4f5fe8c481919801e2b518020c5d0fbac59395773c9b",
+  "location_description": "Scaffolding area on a construction site",
+  "hazards": [
+    {
+      "hazard_type": "Unsecured Working Platform",
+      "description": "A worker explicitly states, \"that plank doesn't look tied in,\" referring to a plank on the scaffolding platform. Another worker mentions a \"gap right there.\" This indicates that the working platform is not fully decked or planks are not secured, creating a significant fall hazard for workers on the platform.",
+      "risk_level": "CRITICAL",
+      "recommended_actions": [
+        "Immediately stop all work on the affected scaffolding until a competent person inspects and certifies its safety.",
+        "Ensure all scaffolding planks are properly secured, fully decked, and free of gaps.",
+        "Verify that guardrails are properly installed and maintained on all open sides of the platform.",
+        "Provide refresher training on scaffolding safety, including proper planking and securing procedures."
+      ]
+    },
+    {
+      "hazard_type": "Fall Hazard (Height)",
+      "description": "Workers are operating on an elevated scaffolding platform with identified unsecured planks and gaps, significantly increasing the risk of a fall from height.",
+      "risk_level": "CRITICAL",
+      "recommended_actions": [
+        "Ensure all working platforms are fully decked and planks are secured.",
+        "Verify that guardrails are properly installed and maintained.",
+        "Ensure workers are using personal fall arrest systems if required and tied off correctly."
+      ]
+    },
+    {
+      "hazard_type": "Dropped Object Hazard",
+      "description": "Workers are handling a long wooden plank on an elevated scaffolding platform. The presence of an unsecured plank on the platform itself, combined with the movement of materials, creates a risk of objects falling from height and striking workers or equipment below.",
+      "risk_level": "HIGH",
+      "recommended_actions": [
+        "Establish and enforce an exclusion zone below areas where overhead work is being performed.",
+        "Ensure all materials and tools on elevated platforms are secured to prevent accidental displacement or drops.",
+        "Install toe boards on all working platforms to contain loose materials."
+      ]
+    },
+    {
+      "hazard_type": "Unsafe Worker Behavior/Distraction",
+      "description": "Workers are aware of an unsecured plank and a gap on the scaffolding platform but continue to move a large wooden plank without immediately addressing the identified hazards. One worker is also walking backward while carrying the plank, which increases the risk of tripping or losing balance.",
+      "risk_level": "HIGH",
+      "recommended_actions": [
+        "Implement a 'stop work' policy that empowers workers to halt operations immediately when a safety hazard is identified until it is mitigated.",
+        "Provide training on hazard identification, risk assessment, and the importance of immediate corrective action.",
+        "Reinforce safe material handling practices, including maintaining clear sightlines and avoiding walking backward when carrying loads."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "video_id": "20251024_231728_4d32b541_video_68fc4dc296dc81919cf608d921c022c10c1147a9f503ce53",
+  "location_description": "Exterior of a multi-story building under construction, with two workers handling ladders.",
+  "hazards": [
+    {
+      "hazard_type": "Unsafe Worker Behavior/Distraction",
+      "description": "One worker is seen setting up a long extension ladder by himself. This increases the risk of injury to the worker or damage to the ladder due to improper handling and potential loss of control.",
+      "risk_level": "MEDIUM",
+      "recommended_actions": [
+        "Ensure proper training for ladder handling and setup procedures.",
+        "Require two workers for setting up long or heavy extension ladders to ensure stability and safety.",
+        "Implement a buddy system for ladder deployment and relocation."
+      ]
+    },
+    {
+      "hazard_type": "Fall Hazard (Height)",
+      "description": "Two extension ladders are leaning against the building, extending to the second floor. There is no visible indication that the ladders are secured at the top or bottom to prevent displacement, which could lead to a fall.",
+      "risk_level": "HIGH",
+      "recommended_actions": [
+        "Ensure all ladders are secured at the top and/or bottom to prevent slipping or falling.",
+        "Verify ladders are placed at the correct 4:1 angle for stability.",
+        "Conduct pre-use inspections of all ladders for damage or defects."
+      ]
+    },
+    {
+      "hazard_type": "Unguarded Floor/Wall Opening",
+      "description": "The second floor of the building, where the ladders provide access, has open framing and large openings without visible guardrails, toe boards, or other fall protection measures.",
+      "risk_level": "CRITICAL",
+      "recommended_actions": [
+        "Install guardrails, safety nets, or implement personal fall arrest systems around all unguarded floor and wall openings at height.",
+        "Conduct a thorough fall protection assessment for all elevated work areas.",
+        "Implement and enforce a strict fall protection plan for all work at height."
+      ]
+    },
+    {
+      "hazard_type": "Trip/Slip Hazard (Ground)",
+      "description": "The base of the ladders appears to be placed on uneven ground (gravel/dirt) rather than a firm, level surface. This could lead to the ladder shifting, slipping, or becoming unstable.",
+      "risk_level": "HIGH",
+      "recommended_actions": [
+        "Ensure ladders are always placed on firm, level, and stable surfaces.",
+        "Use ladder leveling devices or secure the base if uneven ground cannot be avoided.",
+        "Clear the area around the ladder base of debris and loose material to prevent instability."
+      ]
+    }
+  ]
+}

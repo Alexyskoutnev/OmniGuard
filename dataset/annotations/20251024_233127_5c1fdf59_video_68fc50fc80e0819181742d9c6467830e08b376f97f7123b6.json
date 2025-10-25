@@ -1,0 +1,26 @@
+{
+  "video_id": "20251024_233127_5c1fdf59_video_68fc50fc80e0819181742d9c6467830e08b376f97f7123b6",
+  "location_description": "Workshop area with an eyewash station and various tools.",
+  "hazards": [
+    {
+      "hazard_type": "Improper Tool Use",
+      "description": "The worker is preparing to use an angle grinder on a metal workpiece that is not secured with clamps or a vise. Holding the workpiece by hand while grinding poses a significant risk of the workpiece slipping, causing kickback of the grinder, or the worker's hand coming into contact with the spinning disc.",
+      "risk_level": "HIGH",
+      "recommended_actions": [
+        "Always secure the workpiece firmly with appropriate clamps, a vise, or other securing devices before commencing grinding operations.",
+        "Provide specific training on safe angle grinder operation, emphasizing workpiece stability and control.",
+        "Implement a 'stop work' policy for unsafe tool use."
+      ]
+    },
+    {
+      "hazard_type": "PPE Violation (Missing/Incorrect)",
+      "description": "The worker is operating an angle grinder, which typically generates high levels of noise, but is not visibly wearing hearing protection (earplugs or earmuffs).",
+      "risk_level": "MEDIUM",
+      "recommended_actions": [
+        "Ensure all workers operating noisy equipment, such as angle grinders, wear appropriate hearing protection.",
+        "Conduct noise level assessments in the workshop to identify areas requiring mandatory hearing protection.",
+        "Provide readily accessible and suitable hearing protection to all personnel."
+      ]
+    }
+  ]
+}
