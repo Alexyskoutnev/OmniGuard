@@ -268,7 +268,7 @@ safety-agent/
 - Confidence scores and spatial localization
 
 **Provenance:**
-- All training data follows construction safety standards (OSHA, ANSI)
+- All video datasets follow construction safety standards (OSHA, ANSI)
 - Video preprocessing ensures privacy compliance
 - Synthetic scenarios generated for edge cases
 
