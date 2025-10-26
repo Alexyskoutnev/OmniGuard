@@ -1,4 +1,4 @@
-# Construction Safety AI
+# OmniGaurd
 
 **AI-powered real-time safety monitoring for construction sites using multi-agent systems**
 
@@ -171,7 +171,6 @@ npm run dev
 4. **Event Detection** → System identifies safety events with metadata
 5. **Agent Routing** → Safety Router determines appropriate specialist
 6. **Tool Execution** → Agents call detection and notification tools
-7. **Report Generation** → Comprehensive safety analysis returned
 
 ### Agent Tools
 
@@ -251,16 +250,19 @@ safety-agent/
 │   └── package.json
 ├── pipeline/                   # Video processing
 │   └── pipeline.py             # Gemini VLM integration
-└── deploy/                     # Deployment configs
-    └── nemo-vllm/              # vLLM deployment for Nemotron
 ```
 
 ## Datasets & Synthetic Data
 
 **Video Sources:**
 - Public construction safety datasets
-- Synthetic safety scenario videos
+- Synthetic safety scenario videos generated using OpenAI Sora 2
 - Real-world construction footage (anonymized)
+
+**Synthetic Data Generation:**
+- Used Sora 2 to create controlled test scenarios for system validation
+- Generated videos covering edge cases (poor lighting, occlusions, multi-hazard scenarios)
+- Enabled testing without exposing real workers to dangerous situations
 
 **Event Annotations:**
 - Safety violations detected by Gemini VLM
@@ -270,7 +272,7 @@ safety-agent/
 **Provenance:**
 - All video datasets follow construction safety standards (OSHA, ANSI)
 - Video preprocessing ensures privacy compliance
-- Synthetic scenarios generated for edge cases
+- Synthetic scenarios enable comprehensive testing coverage
 
 ## Known Limitations
 
@@ -295,40 +297,3 @@ safety-agent/
 - [ ] Wearable device integration
 - [ ] Predictive incident modeling
 - [ ] Regulatory compliance reporting
-
-## Deployment
-
-### Development
-```bash
-./run_backend.sh  # Starts FastAPI on :8000
-cd frontend && npm run dev  # Starts React on :5173
-```
-
-### Production
-
-**Option 1: Docker**
-```bash
-# Build and run (coming soon)
-docker-compose up
-```
-
-**Option 2: Akash Network**
-```bash
-# Deploy Nemotron vLLM on Akash
-cd deploy/nemo-vllm
-# See deployment instructions in deploy/nemo-vllm/README.md
-```
-
-## License
-
-MIT License - See LICENSE file
-
-## Contributors
-
-Built for NVIDIA + Akash Hackathon 2025
-
----
-
-**Demo Video:** [YouTube Link](#)
-
-**Track:** NVIDIA Nemotron - Multi-agent system powered by NVIDIA Nemotron Nano 9B v2
