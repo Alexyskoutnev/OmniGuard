@@ -1,220 +1,334 @@
-# Construction Safety Video Analysis with NVIDIA OmniVinci
+# Construction Safety AI
 
-A complete pipeline for training vision-language models to analyze construction site videos for safety violations, accident prediction, and remediation recommendations.
+**AI-powered real-time safety monitoring for construction sites using multi-agent systems**
 
-## Project Overview
+**Track:** NVIDIA Nemotron
 
-This project fine-tunes NVIDIA's OmniVinci multimodal AI model to:
-- Analyze construction site videos for safety violations
-- Predict potential accidents based on observed conditions
-- Provide specific remediation recommendations
-- Generate structured safety reports
+---
 
-## Features
+## Overview
 
-- **Multimodal Analysis**: Processes both video and audio from construction sites
-- **Comprehensive Safety Assessment**: Evaluates PPE compliance, equipment safety, environmental hazards
-- **Accident Prediction**: Predicts potential incidents with probability estimates
-- **Actionable Remediation**: Provides specific, prioritized safety recommendations
-- **Efficient Training**: Uses LoRA/QLoRA for memory-efficient fine-tuning on H100 GPUs
+Construction Safety AI analyzes construction site videos to detect safety hazards using a multi-agent system powered by **NVIDIA Nemotron Nano 9B v2**. The system combines vision-language models for video understanding with specialized safety agents for comprehensive hazard detection and response.
+
+## Architecture
+
+### System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      Frontend (React)                        │
+│  - Video Upload/Recording UI                                 │
+│  - Agent Flow Visualization                                  │
+│  - Real-time Analysis Display                                │
+└────────────────────────┬────────────────────────────────────┘
+                         │ HTTP/REST
+                         ↓
+┌─────────────────────────────────────────────────────────────┐
+│                   Backend (FastAPI)                          │
+│  - Video Processing Pipeline                                 │
+│  - API Endpoints (/api/analyze)                              │
+│  - CORS & File Handling                                      │
+└──────────────┬──────────────────────┬───────────────────────┘
+               │                      │
+               ↓                      ↓
+┌──────────────────────────┐  ┌────────────────────────────────┐
+│  Vision Pipeline         │  │  Agent System (Nemotron)       │
+│  - Gemini VLM            │  │  - Safety Router Agent         │
+│  - Frame Extraction      │  │  - EMS Safety Agent            │
+│  - Event Detection       │  │  - Fire Safety Agent           │
+└──────────────────────────┘  │  - PPE Compliance Agent        │
+                              └────────────────────────────────┘
+```
+
+### Agent Architecture
+
+The system uses a **hierarchical multi-agent system** with tool-calling capabilities:
+
+```
+User Video Input
+       │
+       ↓
+┌──────────────────────────────────────────────────────────────┐
+│              Safety Router Agent (Coordinator)                │
+│  - Analyzes scenario                                          │
+│  - Routes to appropriate specialist                           │
+│  - Priority: EMS > Fire > Compliance                          │
+└─────────┬────────────────┬────────────────┬──────────────────┘
+          │                │                │
+          ↓                ↓                ↓
+    ┌─────────┐      ┌─────────┐     ┌──────────────┐
+    │   EMS   │      │  Fire   │     │  Compliance  │
+    │  Agent  │      │  Agent  │     │    Agent     │
+    └────┬────┘      └────┬────┘     └──────┬───────┘
+         │                │                  │
+         └────────────────┴──────────────────┘
+                         │
+                    Tool Calls
+         ┌───────────────┼───────────────┐
+         ↓               ↓               ↓
+    detect_ems     detect_fire    detect_compliance
+         ↓               ↓               ↓
+    send_site_alert  (shared notification tool)
+```
+
+**Agent Handoff Flow:**
+1. **Router** receives video analysis event
+2. **Router** identifies hazard type and routes to specialist
+3. **Specialist** executes domain-specific tools
+4. **Specialist** returns findings to Router
+5. **Router** compiles comprehensive safety report
+
+## Tech Stack
+
+**Core AI:**
+- **NVIDIA Nemotron Nano 9B v2** - Multi-agent reasoning and tool calling
+- **Google Gemini** - Vision-language model for video analysis
+
+**Backend:**
+- **FastAPI** - REST API server
+- **Python 3.11** - Core runtime
+- **OpenAI SDK** - NVIDIA API integration
+
+**Frontend:**
+- **React + TypeScript** - UI framework
+- **Material-UI (MUI)** - Component library
+- **Vite** - Build tool
+
+**Agent Framework:**
+- Custom agent system with handoffs
+- Tool execution engine
+- Structured logging and tracing
+
+## Quick Start
+
+### Prerequisites
+
+- Python 3.11+
+- Node.js 18+
+- NVIDIA API key
+- Google Gemini API key
+
+### 1. Environment Setup
+
+Create `.env` file in project root:
+
+```bash
+NVIDIA_API_KEY=nvapi-your-key-here
+GEMINI_API_KEY=your-gemini-api-key
+```
+
+### 2. Install Dependencies
+
+**Backend:**
+```bash
+# Install Python dependencies
+uv sync
+
+# Or with pip
+pip install -r requirements.txt
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm install
+```
+
+### 3. Run the Application
+
+**Backend (Terminal 1):**
+```bash
+# From project root
+./run_backend.sh
+
+# Or manually
+cd api
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+**Frontend (Terminal 2):**
+```bash
+cd frontend
+npm run dev
+```
+
+**Access the app:** http://localhost:5173
+
+### 4. Test with Sample Video
+
+1. Open the web interface
+2. Upload a construction site video (or record one)
+3. Click "Analyze Video"
+4. View agent execution flow and safety findings
+
+## How It Works
+
+### Video Analysis Pipeline
+
+1. **Video Upload/Recording** → Frontend captures or uploads video
+2. **Frame Extraction** → Backend processes video into frames
+3. **Vision Analysis** → Gemini VLM analyzes frames for hazards
+4. **Event Detection** → System identifies safety events with metadata
+5. **Agent Routing** → Safety Router determines appropriate specialist
+6. **Tool Execution** → Agents call detection and notification tools
+7. **Report Generation** → Comprehensive safety analysis returned
+
+### Agent Tools
+
+**EMS Safety Agent:**
+- `detect_ems_hazard` - Identifies medical emergencies
+- `send_site_alert` - Dispatches emergency notifications
+
+**Fire Safety Agent:**
+- `detect_fire_hazard` - Detects fire risks and ignition sources
+- `send_site_alert` - Sends fire safety alerts
+
+**Compliance Agent:**
+- `detect_compliance_violation` - Checks PPE and safety equipment
+- `send_site_alert` - Issues compliance warnings
+
+### Example Response
+
+```json
+{
+  "status": "success",
+  "video_id": "api_20251026_094830",
+  "event": {
+    "safety_status": "HIGH",
+    "incident_type": "Fall Hazard",
+    "description": "Worker at elevated height without fall protection"
+  },
+  "agent_output": "Safety Router → Compliance Agent: Missing fall protection harness at 12ft height. Immediate stop work order issued.",
+  "trace": [
+    {
+      "agent_name": "Safety Router Agent",
+      "duration_ms": 3642,
+      "tool_calls": [],
+      "handoff_to": "PPE Compliance Agent"
+    },
+    {
+      "agent_name": "PPE Compliance Agent",
+      "duration_ms": 5234,
+      "tool_calls": [
+        {
+          "tool_name": "detect_compliance_violation",
+          "success": true,
+          "result": "Fall protection violation confirmed"
+        }
+      ]
+    }
+  ]
+}
+```
 
 ## Project Structure
 
 ```
-aitx-hack/
-├── config.py                      # Configuration settings
-├── src/
-│   ├── train/
-│   │   ├── train.py               # LoRA fine-tuning pipeline
-│   │   ├── inference.py           # Safety analysis inference
-│   │   ├── evaluate.py            # Model evaluation and metrics
-│   │   └── merge.py               # Model merging utilities
-│   ├── data/
-│   │   ├── dataset.py             # Dataset handling
-│   │   ├── video_preprocessing.py # Video preprocessing pipeline
-│   │   ├── safety_annotation_schema.py # Safety annotation structures
-│   │   └── annotation_templates.py # Training data generation
-│   └── utils/
-│       ├── model_utils.py         # Model management utilities
-│       └── analyze_videos.py      # Video analysis utilities
-├── finetune/
-│   ├── model/omnivinci/          # Local OmniVinci model
-│   └── src/dataset/              # Training videos
-└── outputs/                      # Generated outputs and results
+safety-agent/
+├── agent/                      # Multi-agent system (Nemotron)
+│   ├── safety_agents.py        # Agent definitions and routing
+│   ├── src/
+│   │   ├── agent.py            # Agent base class
+│   │   ├── runner.py           # Agent execution engine
+│   │   ├── tools.py            # Tool execution framework
+│   │   └── logger.py           # Trace logging
+│   └── tools/
+│       ├── ems_tools.py        # Medical emergency detection
+│       ├── fire_tools.py       # Fire hazard detection
+│       ├── compliance_tools.py # PPE compliance checks
+│       └── notification_tools.py # Alert system
+├── api/                        # FastAPI backend
+│   ├── main.py                 # REST API endpoints
+│   └── requirements.txt
+├── frontend/                   # React web app
+│   ├── src/
+│   │   ├── App.tsx             # Main application
+│   │   ├── components/
+│   │   │   ├── VideoUpload.tsx
+│   │   │   ├── VideoRecorder.tsx
+│   │   │   └── AgentFlowGraph.tsx
+│   │   └── types.ts
+│   └── package.json
+├── pipeline/                   # Video processing
+│   └── pipeline.py             # Gemini VLM integration
+└── deploy/                     # Deployment configs
+    └── nemo-vllm/              # vLLM deployment for Nemotron
 ```
 
-## Setup Instructions
+## Datasets & Synthetic Data
 
-### 1. Environment Setup
+**Video Sources:**
+- Public construction safety datasets
+- Synthetic safety scenario videos
+- Real-world construction footage (anonymized)
 
-```bash
-# Install dependencies using uv
-uv sync
+**Event Annotations:**
+- Safety violations detected by Gemini VLM
+- Structured JSON format with hazard metadata
+- Confidence scores and spatial localization
 
-# For GPU support (Linux), also install:
-# uv sync --extra gpu
-```
+**Provenance:**
+- All training data follows construction safety standards (OSHA, ANSI)
+- Video preprocessing ensures privacy compliance
+- Synthetic scenarios generated for edge cases
 
-### 2. Model Preparation
+## Known Limitations
 
-The OmniVinci model should be available in `finetune/model/omnivinci/`. The project is configured to use the local model path.
-
-### 3. Dataset Analysis
-
-```bash
-# Analyze your video dataset
-uv run python src/utils/analyze_videos.py
-
-# Preprocess videos for training
-uv run python src/data/video_preprocessing.py
-```
-
-### 4. Annotation Schema
-
-```bash
-# Generate safety annotation schema and examples
-uv run python src/data/safety_annotation_schema.py
-
-# Create training dataset templates
-uv run python src/data/annotation_templates.py
-```
-
-## Training Pipeline
-
-### Fine-tuning with LoRA
-
-```bash
-# Run fine-tuning (requires OmniVinci model to be downloaded)
-uv run python src/train/train.py
-```
-
-### Model Evaluation
-
-```bash
-# Evaluate model performance
-uv run python src/train/evaluate.py
-```
-
-### Model Merging
-
-```bash
-# Merge LoRA weights with base model for standalone deployment
-uv run python src/train/merge.py
-```
-
-## Safety Analysis Pipeline
-
-### Inference
-
-```bash
-# Run safety analysis on all videos
-uv run python src/train/inference.py
-```
-
-### Analysis Types
-
-1. **Comprehensive Analysis**: Full safety assessment with violations, predictions, and remediation
-2. **Accident Prediction**: Focus on potential incident forecasting
-3. **Remediation Planning**: Specific safety improvement recommendations
-
-## Key Commands
-
-| Command | Description |
-|---------|-------------|
-| `uv run python src/train/train.py` | Fine-tune OmniVinci with LoRA |
-| `uv run python src/train/inference.py` | Run safety analysis inference |
-| `uv run python src/train/evaluate.py` | Evaluate model performance |
-| `uv run python src/train/merge.py` | Merge LoRA weights with base model |
-
-## Technical Details
-
-### Video Processing
-- **Input**: MP4 videos up to 30 seconds
-- **Frame Sampling**: 4 FPS (up to 128 frames)
-- **Resolution**: 224x224 for model input
-- **Audio**: Optional audio processing with 16kHz sampling
-
-### Model Architecture
-- **Base Model**: NVIDIA OmniVinci multimodal LLM
-- **Fine-tuning**: LoRA with rank 16
-- **Target Modules**: Attention layers (q_proj, v_proj, k_proj, o_proj)
-- **Memory Optimization**: FP16, gradient checkpointing
-
-### Hardware Requirements
-- **GPU**: NVIDIA H100 (80GB) recommended
-- **Memory**: ~60GB for fine-tuning, ~20GB for inference
-- **Storage**: 50GB+ for model and data
-
-## Usage Examples
-
-### Basic Training
-
-```python
-# Training
-from src.train.train import OmniVinciTrainer, TrainingConfig
-
-config = TrainingConfig()
-trainer = OmniVinciTrainer(config)
-trainer.train()
-```
-
-### Safety Analysis
-
-```python
-# Inference
-from src.train.inference import SafetyInferenceEngine
-
-inference = SafetyInferenceEngine(use_finetuned=True)
-result = inference.analyze_video("construction_video.mp4", "comprehensive")
-print(result.prediction)
-```
-
-### Model Evaluation
-
-```python
-# Evaluation
-from src.train.evaluate import SafetyAnalysisEvaluator
-
-evaluator = SafetyAnalysisEvaluator()
-results = evaluator.compare_models()
-```
-
-## File Outputs
-
-The system generates several output files:
-
-- `outputs/video_analysis.json`: Video metadata and analysis
-- `outputs/safety_annotation_schema.json`: Complete annotation schema
-- `outputs/training_dataset.json`: Formatted training conversations
-- `outputs/finetuned_model/`: Fine-tuned model weights
-- `outputs/merged_model_*/`: Standalone merged models
-- `outputs/safety_analysis_results_*.json`: Inference results
-- `outputs/evaluation_results_*.json`: Model performance metrics
-
-## Current Status
-
-✅ **Completed Components:**
-- Modular project structure with src/train organization
-- Environment setup with uv package management
-- Video analysis and preprocessing pipeline
-- Comprehensive safety annotation schema
-- Training data generation with OmniVinci format
-- LoRA fine-tuning pipeline implementation
-- Multi-modal inference pipeline for safety analysis
-- Model evaluation and comparison framework
-- Model merging utilities for deployment
-
-⏳ **Pending:**
-- OmniVinci model download completion
-- Model testing and validation
-- Fine-tuning execution
-- Performance evaluation
+1. **Video Quality** - Performance degrades with low resolution (<480p) or poor lighting
+2. **Occlusion** - Partially obscured hazards may not be detected
+3. **Domain Coverage** - Optimized for common construction scenarios
+4. **Real-time Constraints** - Processing takes 10-30s per video (not sub-second)
+5. **False Positives** - May flag safe scenarios that visually resemble hazards
 
 ## Next Steps
 
-1. **Test Model Loading**: Once OmniVinci download completes, run model tests
-2. **Execute Training**: Run `uv run python src/train/train.py`
-3. **Evaluate Performance**: Run `uv run python src/train/evaluate.py`
-4. **Deploy Pipeline**: Use `uv run python src/train/merge.py` for standalone model
+**Near Term:**
+- [ ] Real-time video streaming support
+- [ ] Multi-camera view fusion
+- [ ] Custom safety rule configuration
+- [ ] Historical incident database
+- [ ] SMS/email alert integration
 
-This project provides a complete, modular framework for construction safety video analysis with clear separation of concerns between training, inference, evaluation, and deployment components.
+**Long Term:**
+- [ ] Edge deployment (on-site processing)
+- [ ] Multi-language support
+- [ ] Wearable device integration
+- [ ] Predictive incident modeling
+- [ ] Regulatory compliance reporting
+
+## Deployment
+
+### Development
+```bash
+./run_backend.sh  # Starts FastAPI on :8000
+cd frontend && npm run dev  # Starts React on :5173
+```
+
+### Production
+
+**Option 1: Docker**
+```bash
+# Build and run (coming soon)
+docker-compose up
+```
+
+**Option 2: Akash Network**
+```bash
+# Deploy Nemotron vLLM on Akash
+cd deploy/nemo-vllm
+# See deployment instructions in deploy/nemo-vllm/README.md
+```
+
+## License
+
+MIT License - See LICENSE file
+
+## Contributors
+
+Built for NVIDIA + Akash Hackathon 2025
+
+---
+
+**Demo Video:** [YouTube Link](#)
+
+**Track:** NVIDIA Nemotron - Multi-agent system powered by NVIDIA Nemotron Nano 9B v2
