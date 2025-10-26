@@ -1,0 +1,39 @@
+FROM nvidia/cuda:12.1.1-devel-ubuntu22.04
+
+
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    python3-dev \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install uv
+
+ENV VLLM_COMMIT=75531a6c134282f940c86461b3c40996b4136793
+
+# 4. Install the specified vLLM build using uv
+# This ensures you have the exact version that supports this model's features
+RUN uv pip install vllm --system --extra-index-url https://wheels.vllm.ai/${VLLM_COMMIT}
+
+# 5. Clone the model repository
+# This is required to get the tool-calling parser script
+RUN git clone https://huggingface.co/nvidia/NVIDIA-Nemotron-Nano-9B-v2
+
+# Expose the default vLLM port
+EXPOSE 8000
+
+# 6. Set the default command (CMD) to start the vLLM server
+# This uses the exact arguments from the "Using Tool-Calling" section
+CMD [ \
+    "python3", "-m", "vllm.entrypoints.openai.api_server", \
+    "--model", "nvidia/NVIDIA-Nemotron-Nano-9B-v2", \
+    "--trust-remote-code", \
+    "--mamba_ssm_cache_dtype", "float32", \
+    "--enable-auto-tool-choice", \
+    "--tool-parser-plugin", "NVIDIA-Nemotron-Nano-9B-v2/nemotron_toolcall_parser_no_streaming.py", \
+    "--tool-call-parser", "nemotron_json", \
+    "--host", "0.0.0.0" \
+]
