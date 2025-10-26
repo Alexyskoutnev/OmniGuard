@@ -41,7 +41,7 @@ def detect_compliance_violation(description: str) -> str:
     else:
         severity = "MODERATE"
 
-    response_parts = [f"🦺 PPE VIOLATION DETECTED - Severity: {severity}"]
+    response_parts = [f"PPE VIOLATION - Severity: {severity}"]
     response_parts.append(f"Violations: {', '.join(detected_violations)}")
 
     # Log to safety system
@@ -50,13 +50,13 @@ def detect_compliance_violation(description: str) -> str:
         severity=severity,
         data={"violations": detected_violations, "violation_score": violation_score},
     )
-    response_parts.append(f"\n📋 Violation logged: {api_response['incident_id']}")
+    response_parts.append(f"\nIncident ID: {api_response['incident_id']}")
 
     if severity == "CRITICAL":
-        response_parts.append("\n🛑 WORK STOPPAGE ISSUED")
+        response_parts.append("\nWORK STOPPAGE ISSUED")
         response_parts.append("Site supervisor and safety manager notified")
 
-    response_parts.append("\n✅ COMPLIANCE ACTIONS:")
+    response_parts.append("\nCompliance Actions Required:")
     response_parts.append("1. Stop worker - no entry to hazard area")
     response_parts.append("2. Provide required PPE immediately")
     response_parts.append("3. Document violation in worker file")

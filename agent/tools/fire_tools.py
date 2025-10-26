@@ -48,8 +48,8 @@ def detect_fire_hazard(description: str) -> str:
     else:
         risk_level = "MODERATE"
 
-    response_parts = [f"🔥 FIRE HAZARD DETECTED - Risk Level: {risk_level}"]
-    response_parts.append(f"Hazards identified: {', '.join(detected_hazards)}")
+    response_parts = [f"FIRE HAZARD - Risk Level: {risk_level}"]
+    response_parts.append(f"Hazards: {', '.join(detected_hazards)}")
 
     if risk_level in ["CRITICAL", "HIGH"]:
         # Call 911 for fire
@@ -58,9 +58,8 @@ def detect_fire_hazard(description: str) -> str:
             emergency_type="Fire Emergency",
             description=f"Fire hazard: {', '.join(detected_hazards)}",
         )
-        response_parts.append(
-            f"\n✅ FIRE DEPARTMENT DISPATCHED - Call ID: {call_response['call_id']}"
-        )
+        response_parts.append("\nFire Department Dispatched")
+        response_parts.append(f"Call ID: {call_response['call_id']}")
         response_parts.append(f"ETA: {call_response['estimated_arrival']}")
 
         # Log to safety system
@@ -69,10 +68,10 @@ def detect_fire_hazard(description: str) -> str:
             severity=risk_level,
             data={"hazards": detected_hazards, "risk_score": risk_score},
         )
-        response_parts.append(f"\n📋 Fire incident logged: {api_response['incident_id']}")
+        response_parts.append(f"\nIncident ID: {api_response['incident_id']}")
 
-    response_parts.append("\n🚨 IMMEDIATE ACTIONS:")
-    response_parts.append("1. EVACUATE immediate area")
+    response_parts.append("\nImmediate Actions Required:")
+    response_parts.append("1. Evacuate immediate area")
     response_parts.append("2. Use fire extinguisher only if safe and trained")
     response_parts.append("3. Activate fire alarm system")
     response_parts.append("4. Account for all personnel at muster point")

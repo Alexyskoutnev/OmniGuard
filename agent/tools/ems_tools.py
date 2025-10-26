@@ -47,8 +47,8 @@ def detect_ems_hazard(description: str) -> str:
         severity = "MODERATE"
 
     # Build response
-    response_parts = [f"⚠️ MEDICAL EMERGENCY DETECTED - Severity: {severity}"]
-    response_parts.append(f"Conditions identified: {', '.join(detected_conditions)}")
+    response_parts = [f"MEDICAL EMERGENCY - Severity: {severity}"]
+    response_parts.append(f"Conditions: {', '.join(detected_conditions)}")
 
     if severity in ["CRITICAL", "HIGH"]:
         # Call 911
@@ -57,7 +57,8 @@ def detect_ems_hazard(description: str) -> str:
             emergency_type="Medical Emergency",
             description=f"Worker showing signs of: {', '.join(detected_conditions)}",
         )
-        response_parts.append(f"\n✅ 911 DISPATCHED - Call ID: {call_response['call_id']}")
+        response_parts.append("\n911 Dispatched")
+        response_parts.append(f"Call ID: {call_response['call_id']}")
         response_parts.append(f"ETA: {call_response['estimated_arrival']}")
         response_parts.append(f"Units: {', '.join(call_response['units_dispatched'])}")
 
@@ -67,10 +68,10 @@ def detect_ems_hazard(description: str) -> str:
             severity=severity,
             data={"conditions": detected_conditions, "score": severity_score},
         )
-        response_parts.append(f"\n📋 Incident logged: {api_response['incident_id']}")
+        response_parts.append(f"\nIncident ID: {api_response['incident_id']}")
 
     # Add immediate actions
-    response_parts.append("\n🚨 IMMEDIATE ACTIONS:")
+    response_parts.append("\nImmediate Actions Required:")
     response_parts.append("1. Do not move the worker unless immediate danger present")
     response_parts.append("2. Assign first aid responder to stay with worker")
     response_parts.append("3. Clear area and prepare for EMS arrival")
