@@ -156,10 +156,21 @@ npm run dev
 
 ### 4. Test with Sample Video
 
-1. Open the web interface
-2. Upload a construction site video (or record one)
-3. Click "Analyze Video"
-4. View agent execution flow and safety findings
+**Using the provided example:**
+
+![Sample Construction Site Video](examples/sample_construction_site.jpg)
+*Sample test video generated with OpenAI Sora 2*
+
+```bash
+# Sample video located at:
+examples/sample_construction_site.mp4
+```
+
+1. Open the web interface at http://localhost:5173
+2. Click "Upload Video" tab
+3. Upload `examples/sample_construction_site.mp4` (or record your own)
+4. Click "Analyze Video"
+5. View agent execution flow and safety findings in real-time
 
 ## How It Works
 
@@ -250,6 +261,10 @@ safety-agent/
 │   └── package.json
 ├── pipeline/                   # Video processing
 │   └── pipeline.py             # Gemini VLM integration
+├── examples/                   # Example test videos
+│   ├── sample_construction_site.mp4  # Sample video for testing
+│   └── sample_construction_site.jpg  # Preview image (Sora 2 generated)
+└── deploy/                     # Deployment configs
 ```
 
 ## Datasets & Synthetic Data
@@ -263,6 +278,7 @@ safety-agent/
 - Used Sora 2 to create controlled test scenarios for system validation
 - Generated videos covering edge cases (poor lighting, occlusions, multi-hazard scenarios)
 - Enabled testing without exposing real workers to dangerous situations
+- Example video included: `examples/sample_construction_site.mp4` (Sora 2 generated)
 
 **Event Annotations:**
 - Safety violations detected by Gemini VLM
@@ -285,6 +301,7 @@ safety-agent/
 ## Next Steps
 
 **Near Term:**
+- [ ] Finetune vision models with Sora 2 generated dataset for better hazard alignment
 - [ ] Real-time video streaming support
 - [ ] Multi-camera view fusion
 - [ ] Custom safety rule configuration
