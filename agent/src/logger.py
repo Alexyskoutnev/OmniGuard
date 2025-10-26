@@ -58,7 +58,7 @@ class AgentLogger:
             agent_name=agent_name,
             start_time=datetime.now().isoformat(),
         )
-        self._log(f"🤖 Starting agent: {agent_name}", "AGENT")
+        self._log_box(f"AGENT: {agent_name}", "START")
 
     def end_agent(self, output: str, handoff_to: str | None = None):
         """
@@ -79,9 +79,9 @@ class AgentLogger:
             self.current_trace.handoff_to = handoff_to
 
             if handoff_to:
-                self._log(f"🔄 Handing off to: {handoff_to}", "HANDOFF")
+                self._log_box(f"HANDOFF -> {handoff_to}", "TRANSFER")
             else:
-                self._log(f"✅ Agent completed in {duration_ms:.2f}ms", "AGENT")
+                self._log_box(f"COMPLETED ({duration_ms:.0f}ms)", "END")
 
             self.traces.append(self.current_trace)
             self.current_trace = None
@@ -119,16 +119,19 @@ class AgentLogger:
         if self.current_trace:
             self.current_trace.tool_calls.append(trace)
 
-        # Format arguments for display
-        args_str = ", ".join(f"{k}={v}" for k, v in arguments.items())
+        # Format arguments for display (shortened)
+        args_display = []
+        for k, v in arguments.items():
+            v_str = str(v)
+            if len(v_str) > 60:
+                v_str = v_str[:57] + "..."
+            args_display.append(f"{k}={v_str}")
+        args_str = ", ".join(args_display)
 
         if success:
-            self._log(f"🔧 Tool call: {tool_name}({args_str})", "TOOL")
-            self._log(f"   Result: {result[:100]}{'...' if len(result) > 100 else ''}", "TOOL")
-            self._log(f"   Duration: {duration_ms:.2f}ms", "TOOL")
+            self._log_tool(tool_name, args_str, result, duration_ms)
         else:
-            self._log(f"❌ Tool call failed: {tool_name}({args_str})", "ERROR")
-            self._log(f"   Error: {error}", "ERROR")
+            self._log_error(f"Tool {tool_name} failed: {error}")
 
     def log_iteration(self, iteration: int):
         """
@@ -140,7 +143,7 @@ class AgentLogger:
         if self.current_trace:
             self.current_trace.iterations = iteration
 
-        self._log(f"🔄 Iteration {iteration}", "LOOP")
+        self._log_simple(f"├─ Iteration {iteration}")
 
     def log_model_call(self, model: str, message_count: int):
         """
@@ -150,7 +153,8 @@ class AgentLogger:
             model: Model name
             message_count: Number of messages in context
         """
-        self._log(f"💬 Calling model: {model} (messages: {message_count})", "MODEL")
+        model_short = model.split("/")[-1] if "/" in model else model
+        self._log_simple(f"│  ├─ Model: {model_short} ({message_count} msgs)")
 
     def log_handoff_attempt(self, from_agent: str, to_agent: str, reason: str = ""):
         """
@@ -161,10 +165,7 @@ class AgentLogger:
             to_agent: Target agent name
             reason: Reason for handoff
         """
-        msg = f"🔀 Handoff: {from_agent} → {to_agent}"
-        if reason:
-            msg += f" (Reason: {reason})"
-        self._log(msg, "HANDOFF")
+        self._log_simple(f"│  └─ Handoff: {from_agent} -> {to_agent}")
 
     def get_summary(self) -> str:
         """
@@ -196,18 +197,39 @@ class AgentLogger:
         lines.append("\n" + "=" * 80)
         return "\n".join(lines)
 
-    def _log(self, message: str, level: str = "INFO"):
-        """
-        Internal logging method
+    def _log_box(self, message: str, box_type: str = "INFO"):
+        """Log with box formatting"""
+        if not self.verbose:
+            return
 
-        Args:
-            message: Message to log
-            level: Log level
-        """
+        if box_type == "START":
+            print(f"\n┌─ {message}")
+        elif box_type == "END" or box_type == "TRANSFER":
+            print(f"└─ {message}\n")
+
+    def _log_simple(self, message: str):
+        """Log simple line"""
         if self.verbose:
-            indent = "  " * self._indent_level
-            timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]
-            print(f"[{timestamp}] {indent}{message}")
+            print(message)
+
+    def _log_tool(self, tool_name: str, args: str, result: str, duration_ms: float):
+        """Log tool call with clean formatting"""
+        if not self.verbose:
+            return
+
+        result_preview = result[:80].replace("\n", " ") if result else ""
+        if len(result) > 80:
+            result_preview += "..."
+
+        print(f"│  ├─ Tool: {tool_name}")
+        print(f"│  │  ├─ Args: {args}")
+        print(f"│  │  ├─ Result: {result_preview}")
+        print(f"│  │  └─ Time: {duration_ms:.1f}ms")
+
+    def _log_error(self, message: str):
+        """Log error message"""
+        if self.verbose:
+            print(f"│  └─ ERROR: {message}")
 
     def indent(self):
         """Increase indentation level"""
