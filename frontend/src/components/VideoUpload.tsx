@@ -43,10 +43,9 @@ export default function VideoUpload({ onUpload, isAnalyzing }: VideoUploadProps)
             border: '2px dashed',
             borderColor: 'divider',
             bgcolor: 'white',
-            transition: 'all 0.3s',
+            transition: 'border-color 0.3s',
             '&:hover': {
               borderColor: 'primary.main',
-              bgcolor: 'rgba(0, 113, 227, 0.02)',
             },
           }}
           component="label"
