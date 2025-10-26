@@ -34,17 +34,18 @@ export default function VideoUpload({ onUpload, isAnalyzing }: VideoUploadProps)
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto' }}>
       <Paper
+        elevation={0}
         sx={{
-          p: 6,
+          p: 8,
           textAlign: 'center',
           cursor: 'pointer',
           border: '2px dashed',
-          borderColor: selectedFile ? 'primary.main' : 'grey.300',
-          bgcolor: selectedFile ? 'primary.50' : 'background.paper',
+          borderColor: selectedFile ? 'primary.main' : 'divider',
+          bgcolor: 'white',
           transition: 'all 0.3s',
           '&:hover': {
             borderColor: 'primary.main',
-            bgcolor: 'primary.50',
+            bgcolor: 'rgba(0, 113, 227, 0.02)',
           },
         }}
         component="label"
@@ -61,7 +62,7 @@ export default function VideoUpload({ onUpload, isAnalyzing }: VideoUploadProps)
             width: 80,
             height: 80,
             borderRadius: '50%',
-            bgcolor: 'background.paper',
+            bgcolor: 'rgba(0, 113, 227, 0.08)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -72,10 +73,10 @@ export default function VideoUpload({ onUpload, isAnalyzing }: VideoUploadProps)
           {selectedFile ? (
             <VideoFile sx={{ fontSize: 40, color: 'primary.main' }} />
           ) : (
-            <CloudUpload sx={{ fontSize: 40, color: 'text.secondary' }} />
+            <CloudUpload sx={{ fontSize: 40, color: 'primary.main' }} />
           )}
         </Box>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: 500 }}>
           {selectedFile ? selectedFile.name : 'Choose a video file'}
         </Typography>
         <Typography variant="body2" color="text.secondary">
