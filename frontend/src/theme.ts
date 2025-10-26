@@ -5,19 +5,26 @@ export const theme = createTheme({
     primary: {
       main: '#0071e3',
       dark: '#0077ed',
-    },
+      light: '#3b99ff',
+      50: '#e5f2ff',
+    } as any,
     secondary: {
       main: '#1d1d1f',
     },
     error: {
       main: '#dc2626',
-    },
+      light: '#ef4444',
+      50: '#fee2e2',
+    } as any,
     warning: {
       main: '#ea580c',
     },
     success: {
       main: '#65a30d',
-    },
+      dark: '#4d7c0f',
+      light: '#84cc16',
+      50: '#f0fdf4',
+    } as any,
     background: {
       default: '#ffffff',
       paper: '#f5f5f7',

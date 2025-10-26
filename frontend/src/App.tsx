@@ -13,7 +13,7 @@ import {
 import { Refresh, Error as ErrorIcon } from '@mui/icons-material';
 import VideoUpload from './components/VideoUpload';
 import MetricsCard from './components/MetricsCard';
-import AgentTraceTree from './components/AgentTraceTree';
+import AgentFlowGraph from './components/AgentFlowGraph';
 import { AnalysisResponse } from './types';
 
 const API_URL = 'http://localhost:8000';
@@ -145,9 +145,9 @@ function App() {
               </Grid>
             </Grid>
 
-            {/* Agent Trace Section */}
+            {/* Agent Flow Graph */}
             <Box>
-              <AgentTraceTree traces={result.trace} />
+              <AgentFlowGraph traces={result.trace} />
             </Box>
 
             {/* Download Buttons */}
