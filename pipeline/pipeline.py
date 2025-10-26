@@ -54,7 +54,7 @@ def run_video_model(video_bytes: bytes, video_id: str) -> str:
     )
     result_dict = json.loads(response.text)
     result_dict["video_id"] = video_id
-    logging.info(f"Video model result: {result_dict}")
+    logging.debug(f"Video model result: {result_dict}")
     event = Event(**result_dict)
     return str(event.model_dump_json())
 
