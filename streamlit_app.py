@@ -222,9 +222,7 @@ with st.sidebar:
         st.rerun()
 
 # Main content
-st.markdown(
-    '<div class="main-header">Construction Safety Agent System</div>', unsafe_allow_html=True
-)
+st.markdown('<div class="main-header">Safety Agent</div>', unsafe_allow_html=True)
 st.markdown(
     '<div class="sub-header">AI-powered real-time safety monitoring</div>',
     unsafe_allow_html=True,

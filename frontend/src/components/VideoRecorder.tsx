@@ -16,21 +16,30 @@ export default function VideoRecorder({ onUpload, isAnalyzing }: VideoRecorderPr
   const [isRecording, setIsRecording] = useState(false);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
 
   // Request camera access
   useEffect(() => {
+    let mounted = true;
+
     const requestCamera = async () => {
       try {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
           video: { width: 1280, height: 720 },
           audio: true,
         });
-        setStream(mediaStream);
+
+        if (!mounted) {
+          mediaStream.getTracks().forEach(track => track.stop());
+          return;
+        }
+
+        streamRef.current = mediaStream;
         setHasPermission(true);
 
         if (videoRef.current) {
@@ -38,7 +47,10 @@ export default function VideoRecorder({ onUpload, isAnalyzing }: VideoRecorderPr
         }
       } catch (err) {
         console.error('Error accessing camera:', err);
-        setHasPermission(false);
+        if (mounted) {
+          setHasPermission(false);
+          setError(err instanceof Error ? err.message : 'Camera access denied');
+        }
       }
     };
 
@@ -46,49 +58,96 @@ export default function VideoRecorder({ onUpload, isAnalyzing }: VideoRecorderPr
 
     // Cleanup
     return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
+      mounted = false;
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
       }
     };
   }, []);
 
-  const startRecording = () => {
-    if (!stream) return;
+  const getSupportedMimeType = () => {
+    const types = [
+      'video/webm;codecs=vp9,opus',
+      'video/webm;codecs=vp8,opus',
+      'video/webm',
+      'video/mp4',
+    ];
 
-    chunksRef.current = [];
-    const mediaRecorder = new MediaRecorder(stream, {
-      mimeType: 'video/webm',
-    });
-
-    mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        chunksRef.current.push(event.data);
+    for (const type of types) {
+      if (MediaRecorder.isTypeSupported(type)) {
+        return type;
       }
-    };
+    }
+    return '';
+  };
 
-    mediaRecorder.onstop = () => {
-      const blob = new Blob(chunksRef.current, { type: 'video/webm' });
-      const url = URL.createObjectURL(blob);
-      setRecordedVideoUrl(url);
-    };
+  const startRecording = () => {
+    if (!streamRef.current) {
+      setError('Camera stream not available');
+      return;
+    }
 
-    mediaRecorderRef.current = mediaRecorder;
-    mediaRecorder.start();
-    setIsRecording(true);
+    try {
+      chunksRef.current = [];
+      const mimeType = getSupportedMimeType();
+
+      if (!mimeType) {
+        setError('No supported video format found');
+        return;
+      }
+
+      const mediaRecorder = new MediaRecorder(streamRef.current, {
+        mimeType: mimeType,
+      });
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        setRecordedVideoUrl(url);
+      };
+
+      mediaRecorder.onerror = (event) => {
+        console.error('MediaRecorder error:', event);
+        setError('Recording failed');
+        setIsRecording(false);
+      };
+
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start(100); // Capture data every 100ms
+      setIsRecording(true);
+      setError(null);
+    } catch (err) {
+      console.error('Error starting recording:', err);
+      setError(err instanceof Error ? err.message : 'Failed to start recording');
+    }
   };
 
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
+      try {
+        mediaRecorderRef.current.stop();
+        setIsRecording(false);
+      } catch (err) {
+        console.error('Error stopping recording:', err);
+        setError('Failed to stop recording');
+      }
     }
   };
 
   const handleAnalyze = () => {
     if (recordedVideoUrl && chunksRef.current.length > 0) {
-      const blob = new Blob(chunksRef.current, { type: 'video/webm' });
-      const file = new File([blob], `recorded_${Date.now()}.webm`, {
-        type: 'video/webm',
+      const mimeType = getSupportedMimeType();
+      const extension = mimeType.includes('webm') ? 'webm' : 'mp4';
+      const blob = new Blob(chunksRef.current, { type: mimeType });
+      const file = new File([blob], `recorded_${Date.now()}.${extension}`, {
+        type: mimeType,
       });
       onUpload(file);
     }
@@ -129,9 +188,14 @@ export default function VideoRecorder({ onUpload, isAnalyzing }: VideoRecorderPr
         <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }} color="error">
           Camera Access Denied
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
           Please allow camera access to record video
         </Typography>
+        {error && (
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
+            Error: {error}
+          </Typography>
+        )}
       </Box>
     );
   }
@@ -148,6 +212,25 @@ export default function VideoRecorder({ onUpload, isAnalyzing }: VideoRecorderPr
     <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
       {!recordedVideoUrl ? (
         <Box>
+          {/* Error Display */}
+          {error && (
+            <Box
+              sx={{
+                p: 2,
+                mb: 3,
+                bgcolor: 'rgba(244, 67, 54, 0.1)',
+                border: 1,
+                borderColor: 'error.main',
+                borderRadius: 2,
+                textAlign: 'center',
+              }}
+            >
+              <Typography variant="body2" color="error">
+                {error}
+              </Typography>
+            </Box>
+          )}
+
           {/* Camera Preview */}
           <Box sx={{ borderRadius: 2, overflow: 'hidden', bgcolor: 'black', mb: 3 }}>
             <video
