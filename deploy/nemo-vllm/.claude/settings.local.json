@@ -3,7 +3,8 @@
     "allow": [
       "Read(//Users/alexy/Documents/Personal Projects/safety-agent/**)",
       "Read(//Users/alexy/Documents/Personal/**)",
-      "Bash(python run_safety_agents.py:*)"
+      "Bash(python run_safety_agents.py:*)",
+      "Read(//Users/alexy/Pictures/Photos Library.photoslibrary/originals/6/**)"
     ],
     "deny": [],
     "ask": []

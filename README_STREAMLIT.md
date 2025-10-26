@@ -9,7 +9,7 @@ Professional investor-ready demo application for the Construction Safety Agent S
 - **Multi-Agent Processing**: See agents in action with live trace
 - **Professional UI**: Clean, investor-friendly interface
 - **Detailed Results**: Safety status, risk probability, incident classification
-- **Agent Trace Viewer**: See every step of the agent decision-making process
+- **Interactive Tree UI**: Visual tree showing agent execution with expandable input/output for each tool call
 - **Export Reports**: Download event data, reports, and trace logs
 
 ## Quick Start
@@ -45,7 +45,7 @@ The app will open in your browser at `http://localhost:8501`
    - Incident type classification
    - Scene description
    - Recommended safety response
-4. **Agent Trace**: Expand the trace viewer to see agent execution details
+4. **Agent Trace**: View the interactive tree UI showing each agent's execution, tool calls, and I/O
 5. **Export**: Download JSON event data, text reports, or trace logs
 
 ## Demo Video Suggestions
@@ -64,7 +64,7 @@ For best investor demo results, use videos showing:
 - **Scene Analysis**: Gemini's video interpretation
 - **Safety Response**: Recommended immediate actions
 - **Agent Output**: Multi-agent system response
-- **Agent Trace**: Expandable execution trace viewer
+- **Agent Trace**: Interactive tree UI with expandable agent nodes, tool calls, and I/O inspection
 - **Export Section**: Download buttons for all data
 
 ### Sidebar
@@ -155,7 +155,7 @@ docker run -p 8501:8501 \
 
 1. **Pre-load Videos**: Have 2-3 demo videos ready
 2. **Highlight Metrics**: Emphasize the risk probability and instant detection
-3. **Show Trace**: Expand the agent trace to show multi-agent collaboration
+3. **Show Trace**: Use the interactive tree UI to demonstrate multi-agent collaboration and tool execution
 4. **Explain Value**: Focus on reducing workplace accidents and compliance costs
 5. **Speed**: Use short videos (10-20s) for quick demos
 6. **Reset Between Demos**: Use sidebar reset button for clean slate
