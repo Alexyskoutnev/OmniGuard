@@ -37,17 +37,19 @@ export default function VideoUpload({ onUpload, isAnalyzing }: VideoUploadProps)
         <Box
           component="label"
           sx={{
-            p: 8,
+            p: 10,
             textAlign: 'center',
             cursor: 'pointer',
-            border: '2px dashed',
+            border: '3px dashed',
             borderColor: 'divider',
-            borderRadius: 2,
-            bgcolor: 'white',
+            borderRadius: 3,
+            bgcolor: '#fafafa',
             display: 'block',
-            transition: 'border-color 0.3s',
+            transition: 'all 0.3s ease',
             '&:hover': {
               borderColor: 'primary.main',
+              bgcolor: 'rgba(0, 113, 227, 0.02)',
+              transform: 'translateY(-2px)',
             },
           }}
         >
@@ -60,24 +62,28 @@ export default function VideoUpload({ onUpload, isAnalyzing }: VideoUploadProps)
           />
           <Box
             sx={{
-              width: 80,
-              height: 80,
-              borderRadius: '50%',
-              bgcolor: 'background.paper',
+              width: 96,
+              height: 96,
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #0071e3 0%, #0077ed 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               mx: 'auto',
               mb: 3,
+              boxShadow: '0 8px 24px rgba(0, 113, 227, 0.25)',
             }}
           >
-            <CloudUpload sx={{ fontSize: 40, color: 'primary.main' }} />
+            <CloudUpload sx={{ fontSize: 48, color: 'white' }} />
           </Box>
-          <Typography variant="h6" gutterBottom sx={{ fontWeight: 500 }}>
-            Choose a video file
+          <Typography variant="h5" gutterBottom sx={{ fontWeight: 700, mb: 1 }}>
+            Drop your video here
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            MP4, MOV, or AVI up to 50MB
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 0.5 }}>
+            or click to browse
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
+            Supports MP4, MOV, AVI • Max 50MB
           </Typography>
         </Box>
       ) : (
@@ -98,6 +104,18 @@ export default function VideoUpload({ onUpload, isAnalyzing }: VideoUploadProps)
               onClick={handleUpload}
               fullWidth
               size="large"
+              sx={{
+                py: 2,
+                fontSize: '1.1rem',
+                fontWeight: 700,
+                borderRadius: 2,
+                background: 'linear-gradient(135deg, #0071e3 0%, #0077ed 100%)',
+                boxShadow: '0 4px 16px rgba(0, 113, 227, 0.3)',
+                textTransform: 'none',
+                '&:hover': {
+                  boxShadow: '0 6px 20px rgba(0, 113, 227, 0.4)',
+                },
+              }}
             >
               Analyze Video
             </Button>
