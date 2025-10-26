@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/alexy/Documents/Personal Projects/safety-agent/**)",
+      "Read(//Users/alexy/Documents/Personal/**)",
+      "Bash(python run_safety_agents.py:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

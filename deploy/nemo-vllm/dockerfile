@@ -8,7 +8,12 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-dev \
     git \
+    git-lfs \
+    wget \
     && rm -rf /var/lib/apt/lists/*
+
+# Initialize Git LFS to properly download model files
+RUN git lfs install
 
 RUN pip3 install uv
 
@@ -18,9 +23,12 @@ ENV VLLM_COMMIT=75531a6c134282f940c86461b3c40996b4136793
 # This ensures you have the exact version that supports this model's features
 RUN uv pip install vllm --system --extra-index-url https://wheels.vllm.ai/${VLLM_COMMIT}
 
-# 5. Clone the model repository
-# This is required to get the tool-calling parser script
-RUN git clone https://huggingface.co/nvidia/NVIDIA-Nemotron-Nano-9B-v2
+# Install huggingface-hub to use download utilities
+RUN pip3 install huggingface-hub
+
+# 5. Clone the model repository with LFS support
+# This is required to get the tool-calling parser script and tokenizer files
+RUN GIT_LFS_SKIP_SMUDGE=0 git clone https://huggingface.co/nvidia/NVIDIA-Nemotron-Nano-9B-v2
 
 # Expose the default vLLM port
 EXPOSE 8000
