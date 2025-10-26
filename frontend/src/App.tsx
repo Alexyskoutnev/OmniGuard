@@ -12,7 +12,6 @@ import {
 } from '@mui/material';
 import { Refresh, Error as ErrorIcon } from '@mui/icons-material';
 import VideoUpload from './components/VideoUpload';
-import MetricsCard from './components/MetricsCard';
 import AgentFlowGraph from './components/AgentFlowGraph';
 import { AnalysisResponse } from './types';
 
@@ -54,17 +53,6 @@ function App() {
     setError(null);
   };
 
-  const getSeverityColor = (status: string) => {
-    const colors: Record<string, string> = {
-      SAFE: '#65a30d',
-      LOW: '#65a30d',
-      MEDIUM: '#d97706',
-      HIGH: '#ea580c',
-      EXTREME: '#dc2626',
-    };
-    return colors[status] || '#1d1d1f';
-  };
-
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       {/* Header */}
@@ -78,14 +66,7 @@ function App() {
         }}
       >
         <Toolbar sx={{ py: 2 }}>
-          <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="h1" sx={{ fontSize: '2rem', mb: 0.5 }}>
-              Construction Safety Agent System
-            </Typography>
-            <Typography variant="subtitle1">
-              AI-powered real-time safety monitoring
-            </Typography>
-          </Box>
+
           {result && (
             <Button
               startIcon={<Refresh />}
@@ -112,39 +93,12 @@ function App() {
           </Alert>
         )}
 
-        {/* Upload Section */}
-        {!result && <VideoUpload onUpload={handleVideoUpload} isAnalyzing={isAnalyzing} />}
+        {/* Upload Section - Always visible */}
+        <VideoUpload onUpload={handleVideoUpload} isAnalyzing={isAnalyzing} />
 
         {/* Results Section */}
         {result && (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {/* Metrics Grid */}
-            <Grid container spacing={3}>
-              <Grid item xs={12} sm={6} md={3}>
-                <MetricsCard
-                  label="Safety Status"
-                  value={result.event.safety_status}
-                  color={getSeverityColor(result.event.safety_status)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <MetricsCard
-                  label="Risk Probability"
-                  value={`${(result.event.predictions.probability * 100).toFixed(0)}%`}
-                  color="#dc2626"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <MetricsCard
-                  label="Incident Type"
-                  value={result.event.predictions.incident_type}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <MetricsCard label="Video ID" value={result.video_id} />
-              </Grid>
-            </Grid>
-
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, mt: 4 }}>
             {/* Agent Flow Graph */}
             <Box>
               <AgentFlowGraph traces={result.trace} />
@@ -221,11 +175,6 @@ function App() {
           mt: 8,
         }}
       >
-        <Container>
-          <Typography variant="body2" color="text.secondary" align="center">
-            Powered by Gemini 2.5 Pro Vision • NVIDIA Nemotron • Custom Agent Framework
-          </Typography>
-        </Container>
       </Box>
     </Box>
   );

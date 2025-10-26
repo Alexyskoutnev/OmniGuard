@@ -32,23 +32,24 @@ export default function VideoUpload({ onUpload, isAnalyzing }: VideoUploadProps)
   };
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto' }}>
+    <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
       {!selectedFile ? (
-        <Paper
-          elevation={0}
+        <Box
+          component="label"
           sx={{
             p: 8,
             textAlign: 'center',
             cursor: 'pointer',
             border: '2px dashed',
             borderColor: 'divider',
+            borderRadius: 2,
             bgcolor: 'white',
+            display: 'block',
             transition: 'border-color 0.3s',
             '&:hover': {
               borderColor: 'primary.main',
             },
           }}
-          component="label"
         >
           <input
             type="file"
@@ -62,7 +63,7 @@ export default function VideoUpload({ onUpload, isAnalyzing }: VideoUploadProps)
               width: 80,
               height: 80,
               borderRadius: '50%',
-              bgcolor: 'rgba(0, 113, 227, 0.08)',
+              bgcolor: 'background.paper',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -78,42 +79,9 @@ export default function VideoUpload({ onUpload, isAnalyzing }: VideoUploadProps)
           <Typography variant="body2" color="text.secondary">
             MP4, MOV, or AVI up to 50MB
           </Typography>
-        </Paper>
+        </Box>
       ) : (
         <Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-            <Box
-              sx={{
-                width: 48,
-                height: 48,
-                borderRadius: '50%',
-                bgcolor: 'rgba(0, 113, 227, 0.08)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <VideoFile sx={{ fontSize: 28, color: 'primary.main' }} />
-            </Box>
-            <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-              <Typography
-                variant="body1"
-                sx={{
-                  fontWeight: 500,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {selectedFile.name}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                MP4, MOV, or AVI up to 50MB
-              </Typography>
-            </Box>
-          </Box>
-
           {previewUrl && (
             <Box sx={{ borderRadius: 2, overflow: 'hidden', bgcolor: 'black', mb: 3 }}>
               <video
@@ -124,16 +92,25 @@ export default function VideoUpload({ onUpload, isAnalyzing }: VideoUploadProps)
             </Box>
           )}
 
-          <Button
-            variant="contained"
-            onClick={handleUpload}
-            disabled={isAnalyzing}
-            fullWidth
-            size="large"
-            startIcon={isAnalyzing ? <CircularProgress size={20} color="inherit" /> : null}
-          >
-            {isAnalyzing ? 'Analyzing...' : 'Analyze Video'}
-          </Button>
+          {!isAnalyzing && (
+            <Button
+              variant="contained"
+              onClick={handleUpload}
+              fullWidth
+              size="large"
+            >
+              Analyze Video
+            </Button>
+          )}
+
+          {isAnalyzing && (
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, py: 2 }}>
+              <CircularProgress size={24} />
+              <Typography variant="body1" color="text.secondary">
+                Analyzing video...
+              </Typography>
+            </Box>
+          )}
         </Box>
       )}
     </Box>

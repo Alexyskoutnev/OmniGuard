@@ -170,6 +170,20 @@ function AgentFlowNode({ trace, index }: { trace: AgentTrace; index: number }) {
 function ToolCallCard({ toolCall }: { toolCall: ToolCall }) {
   const [expanded, setExpanded] = useState(false);
 
+  // Format tool name: detect_ems_hazard → Detect EMS Hazard
+  const formatToolName = (name: string) => {
+    return name
+      .split('_')
+      .map(word => {
+        // Keep acronyms uppercase
+        if (word.toUpperCase() === word || word.length <= 3) {
+          return word.toUpperCase();
+        }
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      })
+      .join(' ');
+  };
+
   return (
     <Paper
       elevation={0}
@@ -197,7 +211,7 @@ function ToolCallCard({ toolCall }: { toolCall: ToolCall }) {
           )}
           <Box>
             <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-              {toolCall.tool_name}
+              {formatToolName(toolCall.tool_name)}
             </Typography>
             <Typography variant="caption" color="text.secondary">
               {toolCall.duration_ms.toFixed(1)}ms
@@ -235,39 +249,42 @@ function ToolCallCard({ toolCall }: { toolCall: ToolCall }) {
             View Details
           </Typography>
         </AccordionSummary>
-        <AccordionDetails sx={{ p: 2, pt: 0 }}>
+        <AccordionDetails sx={{ p: 3, pt: 2 }}>
           {/* Input */}
-          <Box sx={{ mb: 2 }}>
+          <Box sx={{ mb: 3 }}>
             <Typography
-              variant="caption"
+              variant="overline"
               sx={{
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                color: 'text.secondary',
-                mb: 1,
+                fontWeight: 700,
+                color: 'primary.main',
+                mb: 1.5,
                 display: 'block',
+                letterSpacing: 1,
               }}
             >
-              Input
+              Input Parameters
             </Typography>
             <Paper
               elevation={0}
               sx={{
-                p: 2,
-                bgcolor: 'rgba(0, 0, 0, 0.02)',
+                p: 2.5,
+                bgcolor: 'background.paper',
                 border: 1,
                 borderColor: 'divider',
-                maxHeight: 200,
+                borderRadius: 1.5,
+                maxHeight: 300,
                 overflow: 'auto',
               }}
             >
               <pre
                 style={{
                   margin: 0,
-                  fontSize: '0.75rem',
-                  fontFamily: 'Monaco, monospace',
+                  fontSize: '0.813rem',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Mono", Monaco, monospace',
                   whiteSpace: 'pre-wrap',
                   wordBreak: 'break-word',
+                  lineHeight: 1.6,
+                  color: '#1d1d1f',
                 }}
               >
                 {JSON.stringify(toolCall.arguments, null, 2)}
@@ -278,25 +295,26 @@ function ToolCallCard({ toolCall }: { toolCall: ToolCall }) {
           {/* Output */}
           <Box>
             <Typography
-              variant="caption"
+              variant="overline"
               sx={{
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                color: 'text.secondary',
-                mb: 1,
+                fontWeight: 700,
+                color: 'success.main',
+                mb: 1.5,
                 display: 'block',
+                letterSpacing: 1,
               }}
             >
-              Output
+              Response
             </Typography>
             <Paper
               elevation={0}
               sx={{
-                p: 2,
-                bgcolor: 'rgba(0, 0, 0, 0.02)',
+                p: 2.5,
+                bgcolor: 'background.paper',
                 border: 1,
                 borderColor: 'divider',
-                maxHeight: 200,
+                borderRadius: 1.5,
+                maxHeight: 300,
                 overflow: 'auto',
               }}
             >
@@ -305,9 +323,10 @@ function ToolCallCard({ toolCall }: { toolCall: ToolCall }) {
                   variant="body2"
                   sx={{
                     color: 'error.main',
-                    fontFamily: 'Monaco, monospace',
-                    fontSize: '0.75rem',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "SF Mono", Monaco, monospace',
+                    fontSize: '0.813rem',
                     whiteSpace: 'pre-wrap',
+                    lineHeight: 1.6,
                   }}
                 >
                   {toolCall.error}
@@ -316,10 +335,12 @@ function ToolCallCard({ toolCall }: { toolCall: ToolCall }) {
                 <Typography
                   variant="body2"
                   sx={{
-                    fontFamily: 'Monaco, monospace',
-                    fontSize: '0.75rem',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "SF Mono", Monaco, monospace',
+                    fontSize: '0.813rem',
                     whiteSpace: 'pre-wrap',
                     wordBreak: 'break-word',
+                    lineHeight: 1.6,
+                    color: '#1d1d1f',
                   }}
                 >
                   {toolCall.result}
