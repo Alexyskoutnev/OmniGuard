@@ -119,82 +119,34 @@ function App() {
         {result && (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {/* Metrics Grid */}
-            <Box>
-              <Typography variant="h2" sx={{ mb: 3 }}>
-                Analysis Results
-              </Typography>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6} md={3}>
-                  <MetricsCard
-                    label="Safety Status"
-                    value={result.event.safety_status}
-                    color={getSeverityColor(result.event.safety_status)}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <MetricsCard
-                    label="Risk Probability"
-                    value={`${(result.event.predictions.probability * 100).toFixed(0)}%`}
-                    color="#dc2626"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <MetricsCard
-                    label="Incident Type"
-                    value={result.event.predictions.incident_type}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <MetricsCard label="Video ID" value={result.video_id} />
-                </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6} md={3}>
+                <MetricsCard
+                  label="Safety Status"
+                  value={result.event.safety_status}
+                  color={getSeverityColor(result.event.safety_status)}
+                />
               </Grid>
-            </Box>
-
-            {/* Two Column Layout */}
-            <Grid container spacing={4}>
-              {/* Left Column */}
-              <Grid item xs={12} lg={6}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  <Box>
-                    <Typography variant="h3" sx={{ mb: 2 }}>
-                      Scene Analysis
-                    </Typography>
-                    <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8 }}>
-                      {result.event.scene_description}
-                    </Typography>
-                  </Box>
-
-                  <Box>
-                    <Typography variant="h3" sx={{ mb: 2 }}>
-                      Safety Response
-                    </Typography>
-                    <Alert severity="info">
-                      <Typography variant="body2" sx={{ lineHeight: 1.8 }}>
-                        {result.event.safety_response}
-                      </Typography>
-                    </Alert>
-                  </Box>
-                </Box>
+              <Grid item xs={12} sm={6} md={3}>
+                <MetricsCard
+                  label="Risk Probability"
+                  value={`${(result.event.predictions.probability * 100).toFixed(0)}%`}
+                  color="#dc2626"
+                />
               </Grid>
-
-              {/* Right Column */}
-              <Grid item xs={12} lg={6}>
-                <Typography variant="h3" sx={{ mb: 2 }}>
-                  Agent Analysis
-                </Typography>
-                <Alert severity="success">
-                  <Typography variant="body2" sx={{ lineHeight: 1.8 }}>
-                    {result.agent_output}
-                  </Typography>
-                </Alert>
+              <Grid item xs={12} sm={6} md={3}>
+                <MetricsCard
+                  label="Incident Type"
+                  value={result.event.predictions.incident_type}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <MetricsCard label="Video ID" value={result.video_id} />
               </Grid>
             </Grid>
 
             {/* Agent Trace Section */}
             <Box>
-              <Typography variant="h2" sx={{ mb: 3 }}>
-                Agent Execution Trace
-              </Typography>
               <AgentTraceTree traces={result.trace} />
             </Box>
 
@@ -202,9 +154,8 @@ function App() {
             <Grid container spacing={3}>
               <Grid item xs={12} md={4}>
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   fullWidth
-                  size="large"
                   onClick={() => {
                     const blob = new Blob([JSON.stringify(result.event, null, 2)], {
                       type: 'application/json',
@@ -221,9 +172,8 @@ function App() {
               </Grid>
               <Grid item xs={12} md={4}>
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   fullWidth
-                  size="large"
                   onClick={() => {
                     const blob = new Blob([result.agent_output], {
                       type: 'text/plain',
@@ -240,9 +190,8 @@ function App() {
               </Grid>
               <Grid item xs={12} md={4}>
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   fullWidth
-                  size="large"
                   onClick={() => {
                     const blob = new Blob([JSON.stringify(result.trace, null, 2)], {
                       type: 'application/json',
